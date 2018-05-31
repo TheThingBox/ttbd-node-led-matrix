@@ -1,0 +1,25 @@
+{
+  "name": "node-red-contrib-ledmatrix",
+  "version": "2.0.0",
+  "description": "Contains the nodes used in TimeSquAir to use the docker image skale",
+  "node-red": {
+    "nodes": {
+      "ledblank": "02-ledblank.js"
+      ,"ledpicture": "02-ledpicture.js"
+      ,"ledtext": "02-ledtext.js"
+      ,"ledmatrix": "11-ledmatrix.js"
+    }
+  },
+  "keywords": [
+    "node-red",
+    "nodered",
+    "ledmatrix",
+    "thethingbox",
+    "timesquair"
+  ],
+  "dependencies": {},
+  "author": {
+    "name": "http://www.digitalairways.com/"
+  },
+  "license": "http://www.wtfpl.net"
+}

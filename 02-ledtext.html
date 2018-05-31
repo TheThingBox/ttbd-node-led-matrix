@@ -1,0 +1,45 @@
+<script type="text/x-red" data-template-name="ledtext">
+  <div class="form-row">
+    <label for="node-input-message">Text</label>
+    <input type="text" id="node-input-message" placeholder="Hello World !">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="ledtext">
+  <p>Add a text to the ledmatrix</p>
+
+  <p>The text can be configured in the node, if it is left blank, it should be set in an incoming message on <code>msg.message</code></p>
+  <p>If <code>msg.message</code> is also left blank, <code>msg.payload</code> will be used by default</p>
+
+  <p>Other optional properties are :</p>
+  <ul>
+  <li>You can set the text color with <code>msg.color</code> (default color is white)</li>
+  <li>You can set the text size (between 1 and 5 ) with <code>msg.textsize</code> (default size is 3)</li>
+  <li>You can set the text brightness intensity (between 0 and 100 ) with <code>msg.intensity</code> (default intensity is 40%)</li>
+  </ul>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('ledtext',{
+    category: "ledmatrix",
+    defaults: {
+      name: { value: "" },
+      message: { value: "" }
+    },
+    inputs: 1,
+    outputs: 1,
+    color: "#2196f3",
+    paletteLabel: "led text",
+    icon: "ledtext.png",
+    label: function() {
+      return this.name || this.message || "led text";
+    },
+    labelStyle: function() {
+      return this.name ? "node_label_italic":"";
+    }
+  });
+</script>

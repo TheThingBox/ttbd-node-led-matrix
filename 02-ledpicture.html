@@ -1,0 +1,49 @@
+<script type="text/x-red" data-template-name="ledpicture">
+  <div class="form-row">
+    <label for="node-input-picture">Picture</label>
+    <input type="text" id="node-input-picture">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="ledpicture">
+  <p>Display a picture into a led matrix</p>
+  <p>Only accept <b>JPEG</b> and <b>PNG</b> image formats.</p>
+  <br/>
+  <p>The path can be configured in the node, if it is left blank, it should be set in an incoming message on <code>msg.picture</code></p>
+  <p>If <code>msg.picture</code> is also left blank, <code>msg.payload</code> will be used by default</p>
+  <p>This node will clear the property used</p>
+  <p>The picture set should be a path from your device or an url</p>
+  <p>Some exemples :</p>
+  <ul>
+    <li><code>/root/thethingbox/node_modules/node-red/node_modules/ttb-node-picture-picker/icons/pic_clock_red.png</code></li>
+    <li><code>http://exemple.com/yourPicture.png</code></li>
+  </ul>
+  <br/>
+  <p>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('ledpicture',{
+    category: "ledmatrix",
+    defaults: {
+      picture: { value: ""},
+      name: { value: "" }
+    },
+    inputs: 1,
+    outputs: 1,
+    color: "#2196f3",
+    paletteLabel: "led picture",
+    icon: "ledpicture.png",
+    label: function() {
+      return this.name || this.picture || "led picture";
+    },
+    labelStyle: function() {
+      return this.name ? "node_label_italic":"";
+    }
+  });
+</script>
