@@ -2,6 +2,12 @@ module.exports = function(RED) {
   "use strict";
 
   var mqtt = require("mqtt");
+  var scrollMods = [
+    'l2r', // left to right : →
+    'r2l', // rigth to left : ←
+    'b2t', // bottom to top : ↑
+    't2b'  // top to bottom : ↓
+  ]
 
   function ledmatrix(n) {
     RED.nodes.createNode(this, n);
@@ -62,11 +68,11 @@ module.exports = function(RED) {
       }
 
       msg._led_matrix.scroll = {
-        mode: msg.mode || "r2l", // l2r / r2l / b2t / t2b
+        mode: ((msg.mode && scrollMods.indexOf(msg.mode) !== -1)?msg.mode:scrollMods[0])
         speed: speed,
         collapse: msg.collapse || false
       };
-      node.client.publish("host/command/out/skale/start", JSON.stringify(msg._led_matrix));
+      node.client.publish("ui/ledmatrix/textAndImage/start", JSON.stringify(msg._led_matrix));
     });
     this.on('close', function() {
       if (node.client) {
@@ -167,6 +173,6 @@ module.exports = function(RED) {
         break;
       default:
     }
-    return `#${_intensity}${_color[0]}${_color[1]}${_color[2]}`
+    return `0x${_intensity}${_color[0]}${_color[1]}${_color[2]}`
   }
 }

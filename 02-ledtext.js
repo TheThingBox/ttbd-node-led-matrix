@@ -143,6 +143,6 @@ module.exports = function(RED) {
         break;
       default:
     }
-    return `#${_intensity}${_color[0]}${_color[1]}${_color[2]}`
+    return `0x${_intensity}${_color[0]}${_color[1]}${_color[2]}`
   }
 }
