@@ -32,9 +32,17 @@ module.exports = function(RED) {
         msg._led_matrix.data = []
       }
 
-      try{
-        message = message.toString()
-      } catch(e){}
+      if (typeof message === "object") {
+        message = JSON.stringify(message);
+      } else {
+        try{
+          message = message.toString()
+        } catch(e){
+          try{
+            message = message+""
+          } catch(e){}
+        }
+      }
 
       msg._led_matrix.data.push({
         type: "str",
