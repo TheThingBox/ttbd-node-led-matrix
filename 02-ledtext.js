@@ -9,11 +9,11 @@ module.exports = function(RED) {
 
     this.on('input', function (msg) {
       var message = node.message;
-      if (!message) {
+      if (message === null || typeof message === 'undefined') {
         message = msg.message;
-        if (!message){
+        if (message === null || typeof message === 'undefined'){
           message = msg.payload;
-          if(!message){
+          if(message === null || typeof message === 'undefined'){
             node.send(msg);
             return;
           }

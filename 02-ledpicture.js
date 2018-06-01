@@ -17,11 +17,11 @@ module.exports = function(RED) {
 
       var pic = node.picture;
       var options = {};
-      if (!pic) {
+      if (pic === null || typeof pic === 'undefined') {
         pic = msg.picture;
-        if (!pic){
+        if (pic === null || typeof pic === 'undefined'){
           pic = msg.payload;
-          if(!pic){
+          if(pic === null || typeof pic === 'undefined'){
             node.send(msg);
             return;
           }

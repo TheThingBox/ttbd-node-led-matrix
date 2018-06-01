@@ -45,9 +45,9 @@ module.exports = function(RED) {
 
       var speed = 50;
       var speed_value = node.speed;
-      if (!speed_value) {
+      if (speed_value === null || typeof speed_value === 'undefined') {
         speed_value = msg.speed;
-        if (!speed_value){
+        if (speed_value === null || typeof speed_value === 'undefined'){
           speed_value = 3;
         }
       }
