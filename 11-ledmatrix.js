@@ -140,7 +140,7 @@ module.exports = function(RED) {
       color.substring(3,5),
       color.substring(5,7)
     ]
-    var _intensity = Number(parseInt(intensity, 10) || Number(parseInt(defaultIntensity, 10) || 100)
+    var _intensity = Number(parseInt(intensity, 10) || Number(parseInt(defaultIntensity, 10) || 100))
     if(_intensity>100) _intensity = 100;
     if(_intensity<0) _intensity = 0;
     _intensity = Math.round(_intensity*2.55).toString(16).padStart(2, "0").toUpperCase()
