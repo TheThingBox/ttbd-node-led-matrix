@@ -68,7 +68,7 @@ module.exports = function(RED) {
       }
 
       msg._led_matrix.scroll = {
-        mode: ((msg.mode && scrollMods.indexOf(msg.mode) !== -1)?msg.mode:scrollMods[0])
+        mode: ((msg.mode && scrollMods.indexOf(msg.mode) !== -1)?msg.mode:scrollMods[0]),
         speed: speed,
         collapse: msg.collapse || false
       };
