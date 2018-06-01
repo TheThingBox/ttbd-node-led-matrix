@@ -24,10 +24,10 @@
 </script>
 
 <script type="text/javascript">
-  RED.nodes.registerType('ledmatrix',{
+  RED.nodes.registerType('ledmatrix', {
     category: "ledmatrix",
     defaults: {
-      speed: { value: 3, validate: RED.validators.number() },
+      speed: { value: "" },
       name: { value: "" }
     },
     inputs: 1,
