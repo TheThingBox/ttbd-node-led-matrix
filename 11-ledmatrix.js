@@ -8,10 +8,10 @@ module.exports = function(RED) {
     'b2t', // bottom to top : ↑
     't2b'  // top to bottom : ↓
   ]
+  var clockRe = /(([01][0-9]|2[0-3]):[0-5][0-9])/;
 
   function ledmatrix(n) {
     RED.nodes.createNode(this, n);
-
     this.speed = n.speed;
     this.client = mqtt.connect("mqtt://mosquitto:1883");
 
@@ -25,6 +25,57 @@ module.exports = function(RED) {
     });
 
     this.on('input', function(msg) {
+      if (typeof msg._led_matrix === "undefined") {
+        return;
+      }
+      if(!msg._led_matrix.data){
+        return;
+      }
+
+      var isHour
+      if(msg._led_matrix.data.length === 1 && msg._led_matrix.data[0].type === "str"){
+        isHour = msg._led_matrix.data[0].content.match(clockRe)
+        if(isHour !== null && isHour.length !== 0 && isHour[0] == msg._led_matrix.data[0].content){
+          var h = msg.payload.split(':')
+          var m = h[1]
+          var h = h[0]
+
+          var t = new Date()
+          t.setHours(h)
+          t.setMinutes(m)
+
+          var difference = Math.round((new Date().getTime() - t.getTime()) / 60000);
+
+          var sign = "+"
+          if(difference < 0){
+            sign = "-"
+          }
+
+          difference = Math.abs(difference)
+          var hOffset = Math.floor(difference/60)
+          var mOffset = difference%60
+          var ghost = mOffset%15
+          if(ghost !== 0){
+            if(ghost > 7.5){
+              mOffset = mOffset+(15-ghost)
+            } else {
+              mOffset = mOffset-ghost
+            }
+            if(mOffset === 60){
+              mOffset = 0
+              hOffset++
+            }
+          }
+
+          hOffset = (""+hOffset).padStart(2, "0")
+          mOffset = (""+mOffset).padStart(2, "0")
+          node.client.publish("ui/ledmatrix/clock/start", JSON.stringify({
+            timezone: `${sign}${hOffset}:${mOffset}`
+          }));
+          return;
+        }
+      }
+
       var speed = 50;
       var speed_value = node.speed;
       if (!speed_value) {
@@ -36,10 +87,6 @@ module.exports = function(RED) {
       var _speed_value = Number(parseInt(speed_value, 10) || 3)
       if(_speed_value>5) _speed_value = 5;
       if(_speed_value<0) _speed_value = 0;
-
-      if (typeof msg._led_matrix === "undefined") {
-        return;
-      }
 
       msg._led_matrix.backgroundColor = getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40)
 
@@ -72,6 +119,7 @@ module.exports = function(RED) {
         speed: speed,
         collapse: msg.collapse || false
       };
+
       node.client.publish("ui/ledmatrix/textAndImage/start", JSON.stringify(msg._led_matrix));
     });
     this.on('close', function() {
