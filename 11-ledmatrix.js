@@ -3,8 +3,8 @@ module.exports = function(RED) {
 
   var mqtt = require("mqtt");
   var scrollMods = [
-    'l2r', // left to right : →
     'r2l', // rigth to left : ←
+    'l2r', // left to right : →
     'b2t', // bottom to top : ↑
     't2b'  // top to bottom : ↓
   ]
