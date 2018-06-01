@@ -37,7 +37,9 @@ module.exports = function(RED) {
         isHour = msg._led_matrix.data[0].content.match(clockRe)
         if(isHour !== null && isHour.length !== 0 && isHour[0] == msg._led_matrix.data[0].content){
           node.client.publish("ui/ledmatrix/clock/start", JSON.stringify({
-            timezone: getOffsetHour(msg._led_matrix.data[0].content)
+            timezone: getOffsetHour(msg._led_matrix.data[0].content),
+            color: msg._led_matrix.data[0].color,
+            backgroundColor: getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40)
           }));
           return;
         }
