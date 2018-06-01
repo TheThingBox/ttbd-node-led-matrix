@@ -110,7 +110,7 @@ module.exports = function(RED) {
   function getColor(color, intensity, mode, defaultColor, defaultIntensity){
     if(!mode || mode.length !=3 || mode.toLowerCase().indexOf('r') === -1 || mode.toLowerCase().indexOf('g') === -1 || mode.toLowerCase().indexOf('b') === -1) mode = 'rgb'
     mode = mode.toLowerCase()
-    color = colorToHex(color)
+    color = colorToHex(color, defaultColor)
     var _color = [
       color.substring(1,3),
       color.substring(3,5),
