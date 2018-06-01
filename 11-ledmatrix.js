@@ -36,41 +36,8 @@ module.exports = function(RED) {
       if(msg._led_matrix.data.length === 1 && msg._led_matrix.data[0].type === "str"){
         isHour = msg._led_matrix.data[0].content.match(clockRe)
         if(isHour !== null && isHour.length !== 0 && isHour[0] == msg._led_matrix.data[0].content){
-          var h = msg.payload.split(':')
-          var m = h[1]
-          var h = h[0]
-
-          var t = new Date()
-          t.setHours(h)
-          t.setMinutes(m)
-
-          var difference = Math.round((new Date().getTime() - t.getTime()) / 60000);
-
-          var sign = "+"
-          if(difference < 0){
-            sign = "-"
-          }
-
-          difference = Math.abs(difference)
-          var hOffset = Math.floor(difference/60)
-          var mOffset = difference%60
-          var ghost = mOffset%15
-          if(ghost !== 0){
-            if(ghost > 7.5){
-              mOffset = mOffset+(15-ghost)
-            } else {
-              mOffset = mOffset-ghost
-            }
-            if(mOffset === 60){
-              mOffset = 0
-              hOffset++
-            }
-          }
-
-          hOffset = (""+hOffset).padStart(2, "0")
-          mOffset = (""+mOffset).padStart(2, "0")
           node.client.publish("ui/ledmatrix/clock/start", JSON.stringify({
-            timezone: `${sign}${hOffset}:${mOffset}`
+            timezone: getOffsetHour(msg._led_matrix.data[0].content)
           }));
           return;
         }
@@ -129,6 +96,43 @@ module.exports = function(RED) {
     });
   }
   RED.nodes.registerType("ledmatrix", ledmatrix);
+
+  function getOffsetHour(hour){
+    var h = hour.split(':')
+    var m = h[1]
+    var h = h[0]
+
+    var t = new Date()
+    t.setHours(h)
+    t.setMinutes(m)
+
+    var difference = Math.round((new Date().getTime() - t.getTime()) / 60000);
+
+    var sign = "+"
+    if(difference < 0){
+      sign = "-"
+    }
+
+    difference = Math.abs(difference)
+    var hOffset = Math.floor(difference/60)
+    var mOffset = difference%60
+    var ghost = mOffset%15
+    if(ghost !== 0){
+      if(ghost > 7.5){
+        mOffset = mOffset+(15-ghost)
+      } else {
+        mOffset = mOffset-ghost
+      }
+      if(mOffset === 60){
+        mOffset = 0
+        hOffset++
+      }
+    }
+
+    hOffset = (""+hOffset).padStart(2, "0")
+    mOffset = (""+mOffset).padStart(2, "0")
+    return `${sign}${hOffset}:${mOffset}`
+  }
 
   function colorToHex(color, defaultColor){
     if(!color) color = defaultColor || "white"
