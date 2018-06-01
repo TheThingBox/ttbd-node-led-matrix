@@ -20,8 +20,12 @@ module.exports = function(RED) {
         }
       }
 
+      var textsize = null
       if(msg.textsize){
-        msg.textsize = 2*msg.textsize + 6
+        textsize = Number(parseInt(msg.textsize, 10) || 3)
+        if(textsize>5) textsize = 5;
+        if(textsize<1) textsize = 1;
+        textsize = 2*msg.textsize + 6
       }
 
       if(typeof msg._led_matrix === "undefined") {
@@ -47,7 +51,7 @@ module.exports = function(RED) {
       msg._led_matrix.data.push({
         type: "str",
         content: message,
-        font: (msg.font||"Roboto-Regular") + "_" + (msg.textsize||12),
+        font: (msg.font||"Roboto-Regular") + "_" + (textsize||12),
         offset: {
           x: (msg.offset && msg.offset.x)?msg.offset.x:0,
           y: (msg.offset && msg.offset.y)?msg.offset.y:0
