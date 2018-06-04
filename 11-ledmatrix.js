@@ -53,7 +53,7 @@ module.exports = function(RED) {
           speed_value = 3;
         }
       }
-      var _speed_value = Number(parseInt(speed_value, 10) || 3)
+      var _speed_value = Number(parseInt(speed_value, 10) || parseInt(speed_value, 10) === 0 ? 0 : 3)
       if(_speed_value>5) _speed_value = 5;
       if(_speed_value<0) _speed_value = 0;
 
