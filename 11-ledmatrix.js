@@ -108,7 +108,7 @@ module.exports = function(RED) {
     t.setHours(h)
     t.setMinutes(m)
 
-    var difference = Math.round((new Date().getTime() - t.getTime()) / 60000);
+    var difference = Math.round((t.getTime() - new Date().getTime()) / 60000);
 
     var sign = "+"
     if(difference < 0){
