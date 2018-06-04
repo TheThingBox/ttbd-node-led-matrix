@@ -28,6 +28,18 @@ module.exports = function(RED) {
         }
       }
 
+      if (typeof pic === "object") {
+        pic = JSON.stringify(pic);
+      } else {
+        try{
+          pic = pic.toString()
+        } catch(e){
+          try{
+            pic = pic+""
+          } catch(e){}
+        }
+      }
+
       if(typeof msg._led_matrix === "undefined") {
         msg._led_matrix = {
           data: []
