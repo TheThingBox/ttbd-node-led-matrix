@@ -84,14 +84,14 @@ module.exports = function(RED) {
       } else {
         fs.access(pic, fs.constants.F_OK | fs.constants.R_OK, function(err) {
           if(!err){
-            fs.readFile(pic, options, function(err,data) {
+            fs.readFile(pic, options, function(err, data) {
               if (err) {
                 node.warn(pic+" is unreachable");
                 msg.error = err;
               } else {
-                msg._led_matrix_led_matrix.data.push({
-                  type:"img",
-                  content:JSON.parse(JSON.stringify(data)).data
+                msg._led_matrix.data.push({
+                  type: "img",
+                  content: JSON.parse(JSON.stringify(data)).data
                 });
                 delete msg.error;
               }
