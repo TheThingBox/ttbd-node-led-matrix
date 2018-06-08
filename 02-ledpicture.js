@@ -1,6 +1,6 @@
 module.exports = function(RED) {
   "use strict";
-  var fs = require("fs-extra");
+  var fs = require("fs");
   var http = require("follow-redirects").http;
   var https = require("follow-redirects").https;
   var urllib = require("url");
@@ -82,9 +82,9 @@ module.exports = function(RED) {
         });
         req.end();
       } else {
-        fs.access(pic, fs.R_OK, function(err){
+        fs.access(pic, fs.constants.F_OK | fs.constants.R_OK, function(err) {
           if(!err){
-            fs.readFileSync(pic, options, function(err,data) {
+            fs.readFile(pic, options, function(err,data) {
               if (err) {
                 node.warn(pic+" is unreachable");
                 msg.error = err;
