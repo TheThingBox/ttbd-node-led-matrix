@@ -82,12 +82,12 @@ module.exports = function(RED) {
         });
         req.end();
       } else {
-        fs.access(pic, fs.constants.F_OK | fs.constants.R_OK, function(err) {
-          if(!err){
-            fs.readFile(pic, options, function(err, data) {
-              if (err) {
+        fs.access(pic, fs.constants.F_OK | fs.constants.R_OK, function(errAccess) {
+          if(!errAccess){
+            fs.readFile(pic, options, function(errRead, data) {
+              if (errRead) {
                 node.warn(pic+" is unreachable");
-                msg.error = err;
+                msg.error = errRead;
               } else {
                 msg._led_matrix.data.push({
                   type: "img",
