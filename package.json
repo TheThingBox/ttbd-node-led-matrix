@@ -1,6 +1,6 @@
 {
   "name": "ttbd-node-led-matrix",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Contains the nodes used in TimeSquAir to use the docker image skale",
   "node-red": {
     "nodes": {
@@ -17,7 +17,9 @@
     "thethingbox",
     "timesquair"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "ttbd-node-text-font": "TheThingBox/ttbd-node-text-font#2fa428a"
+  },
   "author": {
     "name": "http://www.digitalairways.com/"
   },
