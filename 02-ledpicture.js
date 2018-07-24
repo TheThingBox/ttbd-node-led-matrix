@@ -1,5 +1,6 @@
 module.exports = function(RED) {
   "use strict";
+  var sharp = require("sharp");
   var fs = require("fs");
   var http = require("follow-redirects").http;
   var https = require("follow-redirects").https;
@@ -40,12 +41,47 @@ module.exports = function(RED) {
         }
       }
 
+      var defaultOffsetX = 0
+      var defaultOffsetY = 0
+
+      var offset = {
+        x: (msg.offset && msg.offset.x)?msg.offset.x:defaultOffsetX,
+        y: (msg.offset && msg.offset.y)?msg.offset.y:defaultOffsetY
+      }
+
       if(typeof msg._led_matrix === "undefined") {
         msg._led_matrix = {
           data: []
         };
       } else if(typeof msg._led_matrix.data === "undefined") {
         msg._led_matrix.data = []
+      }
+
+      function getIntensity(intensity, defaultIntensity){
+        var _intensity = Number(parseInt(intensity, 10) || Number(parseInt(defaultIntensity, 10) || 100))
+        if(_intensity>100) _intensity = 100;
+        if(_intensity<0) _intensity = 0;
+        _intensity = 100 - _intensity
+        _intensity = Math.round(_intensity*2.55)
+        return _intensity
+      }
+
+      function resizeAnndBrightness(image, intensity, w, h, algo, callback){
+        if(!algo){ algo = sharp.kernel.nearest }
+        if(!h){ h = 16 }
+        if (typeof callback !== 'function') {
+          callback = function(){};
+        }
+        try {
+          sharp(image).overlayWith(
+            new Buffer([0, 0, 0, getIntensity(intensity, 40)]),
+            { tile: true, raw: { width: 1, height: 1, channels: 4 } }
+          ).resize(w, h, { kernel: algo }).max().toBuffer().then(data => {
+            callback(JSON.parse(JSON.stringify(data)).data)
+          })
+        } catch(e){
+          callback(null)
+        }
       }
 
       if(pic.indexOf("http") == 0){
@@ -63,11 +99,16 @@ module.exports = function(RED) {
             content += chunk;
           });
           res.on('end',function() {
-            msg._led_matrix.data.push({
-              type:"img",
-              content:JSON.parse(JSON.stringify(new Buffer(content,"hex"))).data
-            });
-            node.send(msg);
+            resizeAnndBrightness(new Buffer(content, "hex"), msg.intensity, null, 16, null, dataArray => {
+              if(dataArray){
+                msg._led_matrix.data.push({
+                  type: "img",
+                  offset: "offset",
+                  content: dataArray
+                });
+              }
+              node.send(msg)
+            })
           });
         });
 
@@ -85,17 +126,22 @@ module.exports = function(RED) {
         fs.access(pic, fs.constants.F_OK | fs.constants.R_OK, function(errAccess) {
           if(!errAccess){
             fs.readFile(pic, options, function(errRead, data) {
-              if (errRead) {
+              if (!errRead) {
+                resizeAnndBrightness(data, msg.intensity, null, 16, null, dataArray => {
+                  if(dataArray){
+                    msg._led_matrix.data.push({
+                      type: "img",
+                      offset: offset,
+                      content: dataArray
+                    });
+                  }
+                  node.send(msg)
+                })
+              } else {
                 node.warn(pic+" is unreachable");
                 msg.error = errRead;
-              } else {
-                msg._led_matrix.data.push({
-                  type: "img",
-                  content: JSON.parse(JSON.stringify(data)).data
-                });
-                delete msg.error;
+                node.send(msg);
               }
-              node.send(msg);
             });
           } else {
             node.send(msg);

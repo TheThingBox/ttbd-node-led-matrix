@@ -9,14 +9,14 @@
   </div>
 </script>
 
-
 <script type="text/x-red" data-help-name="ledpicture">
-  <p>Display a picture into a led matrix</p>
+  <p>Create a picture that can be displayed with node <b>ledmatrix</b></p>
   <p>Only accept <b>JPEG</b> and <b>PNG</b> image formats.</p>
   <br/>
   <p>The path can be configured in the node, if it is left blank, it should be set in an incoming message on <code>msg.picture</code></p>
   <p>If <code>msg.picture</code> is also left blank, <code>msg.payload</code> will be used by default</p>
   <p>This node will clear the property used</p>
+  <p>The picture will be resized with the height of the led matrix</p>
   <p>The picture set should be a path from your device or an url</p>
   <p>Some exemples :</p>
   <ul>
@@ -24,7 +24,8 @@
     <li><code>http://exemple.com/yourPicture.png</code></li>
   </ul>
   <br/>
-  <p>
+
+  <p>You can set the text brightness intensity (between 0 and 100 ) with <code>msg.intensity</code> (default intensity is 40%)</p>
 </script>
 
 <script type="text/javascript">
