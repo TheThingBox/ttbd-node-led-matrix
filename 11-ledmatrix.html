@@ -1,7 +1,12 @@
 <script type="text/x-red" data-template-name="ledmatrix">
   <div class="form-row">
-    <label for="node-input-speed">Speed</label>
-    <input type="text" id="node-input-speed">
+    <label for="node-input-scrollingDirection">scrolling direction</label>
+    <select id="node-input-scrollingDirection">
+      <option value="right2left">right to left</option>
+      <option value="left2right">left to right</option>
+      <option value="bottom2top">bottom to top</option>
+      <option value="top2bottom">top to bottom</option>
+    </select>
   </div>
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
@@ -12,18 +17,25 @@
 
 <script type="text/x-red" data-help-name="ledmatrix">
   <p>Display into a led matrix</p>
-  <p>Display content provide by <b>led blank</b>, <b>led picture</b> and <b>led text</b>.</p>
-  <p>You can change the speed property by sending a value in msg.speed</p>
-  <p>You can set the value of msg.speed between 0(static) and 5(fast), default 3</p>
-  <p>You can set the background color with <code>msg.backgroundColor</code> (default backround color is black)</p>
-  <li>You can set the background brightness intensity (between 0 and 100 ) with <code>msg.backgroundIntensity</code> (default intensity is 40%)</li>
+  <p>Display content provide by <b>led blank</b>, <b>led picture</b>, <b>led text</b> and <b>ledclock</b>.</p>
+
+  <p>Properties are :</p>
+  <ul>
+    <li>You can set the scrolling direction with <code>msg.scrollingDirection</code>, (possible values : 'right2left', 'left2right', 'bottom2top' or 'top2bottom', default is 'right2left').</li>
+    <li>You can set the background color with <code>msg.backgroundColor</code> (default backround color is black).</li>
+    <li>You can set the background brightness intensity (between 0 and 100 ) with <code>msg.backgroundIntensity</code> (default intensity is 40%).</li>
+
+    <li>You can set the scrolling speed with <code>msg.speed</code> between 0(static) and 5(fast), default 3.</li>
+
+    <li>You can set if each content should be juxtaposed with <code>msg.collapse</code> (default to false).</li>
+  </ul>
 </script>
 
 <script type="text/javascript">
   RED.nodes.registerType('ledmatrix', {
     category: "ledmatrix",
     defaults: {
-      speed: { value: "" },
+      scrollingDirection: { value: "" },
       name: { value: "" }
     },
     inputs: 1,

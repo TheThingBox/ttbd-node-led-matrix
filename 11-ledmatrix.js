@@ -4,17 +4,30 @@ module.exports = function(RED) {
   var getColor = require("./utils").getColor
   var getOffsetHour = require("./utils").getOffsetHour
   var mqtt = require("mqtt");
-  var scrollMods = [
-    'r2l', // rigth to left : ←
-    'l2r', // left to right : →
-    'b2t', // bottom to top : ↑
-    't2b'  // top to bottom : ↓
+  var scrollingDirection = [
+    {
+      name: 'right2left',
+      value: 'r2l'
+    },
+    {
+      name: 'left2right',
+      value: 'l2r'
+    },
+    {
+      name: 'bottom2top',
+      value: 'b2t'
+    },
+    {
+      name: 'top2bottom',
+      value: 't2b'
+    }
   ]
+
   var clockRe = /(([01][0-9]|2[0-3]):[0-5][0-9])/;
 
   function ledmatrix(n) {
     RED.nodes.createNode(this, n);
-    this.speed = n.speed;
+    this.scrollingDirection = n.scrollingDirection;
     this.client = mqtt.connect("mqtt://mosquitto:1883");
 
     var node = this;
@@ -35,27 +48,42 @@ module.exports = function(RED) {
       }
 
       var isHour
-      if(msg._led_matrix.data.length === 1 && msg._led_matrix.data[0].type === "str"){
+      if(msg._led_matrix.data.length === 1 && ['str', 'clock'].indexOf(msg._led_matrix.data[0].type) !== -1){
         isHour = msg._led_matrix.data[0].content.match(clockRe)
         if(isHour !== null && isHour.length !== 0 && isHour[0] == msg._led_matrix.data[0].content){
-          node.client.publish("ui/ledmatrix/clock/start", JSON.stringify({
-            timezone: getOffsetHour(msg._led_matrix.data[0].content),
-            color: msg._led_matrix.data[0].color,
-            backgroundColor: getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40)
-          }));
+          node.client.publish("ui/ledmatrix/clock/start", JSON.stringify(msg._led_matrix.data.map(d => {
+            d.timezone = getOffsetHour(d.content)
+            d.backgroundColor = getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40)
+            delete d.content
+            return d
+          })[0]));
           return;
         }
+      } else {
+        msg._led_matrix.data = msg._led_matrix.data.map(d => {
+          if(d.type === "clock"){
+            d.type = "str"
+            if(!d.font){
+              var neighborFont = msg._led_matrix.data.filter(df => df.type === 'str')
+              if(neighborFont.length > 0){
+                d.offset = neighborFont[0].offset
+                neighborFont = neighborFont[0].font
+              } else {
+                neighborFont = 'Roboto-Regular_12'
+              }
+              d.font = neighborFont
+            }
+          }
+          return d
+        })
       }
 
       var speed = 50;
-      var speed_value = node.speed;
-      if (speed_value === null || typeof speed_value === 'undefined' || speed_value === "") {
-        speed_value = msg.speed;
-        if (speed_value === null || typeof speed_value === 'undefined' || speed_value === ""){
-          speed_value = 3;
-        }
+      var _speed_value = msg.speed;
+      if (_speed_value === null || typeof _speed_value === 'undefined' || _speed_value === ""){
+          _speed_value = 3;
       }
-      var _speed_value = Number(parseInt(speed_value, 10) || (parseInt(speed_value, 10) === 0 ? 0 : 3))
+      _speed_value = Number(parseInt(_speed_value, 10) || (parseInt(_speed_value, 10) === 0 ? 0 : 3))
       if(_speed_value>5) _speed_value = 5;
       if(_speed_value<0) _speed_value = 0;
 
@@ -85,8 +113,17 @@ module.exports = function(RED) {
           break;
       }
 
+      var scrollingMode = node.scrollingDirection;
+      if (scrollingMode === null || typeof scrollingMode === 'undefined' || scrollingMode === "" || scrollingDirection.findIndex(e => e.name === scrollingMode) === -1) {
+        scrollingMode = msg.scrollingDirection;
+        if (scrollingMode === null || typeof scrollingMode === 'undefined' || scrollingMode === "" || scrollingDirection.findIndex(e => e.name === scrollingMode) === -1){
+          scrollingMode = scrollingDirection[0].name;
+        }
+      }
+      scrollingMode = scrollingDirection.filter(e => e.name === scrollingMode)[0].value
+
       msg._led_matrix.scroll = {
-        mode: ((msg.mode && scrollMods.indexOf(msg.mode) !== -1)?msg.mode:scrollMods[0]),
+        mode: scrollingMode,
         speed: speed,
         collapse: msg.collapse || false
       };
