@@ -1,13 +1,14 @@
 {
   "name": "ttbd-node-led-matrix",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Contains the nodes used in TimeSquAir to use the docker image skale",
   "node-red": {
     "nodes": {
-      "ledblank": "02-ledblank.js"
-      ,"ledpicture": "02-ledpicture.js"
-      ,"ledtext": "02-ledtext.js"
-      ,"ledmatrix": "11-ledmatrix.js"
+      "ledblank": "02-ledblank.js",
+      "ledpicture": "02-ledpicture.js",
+      "ledtext": "02-ledtext.js",
+      "ledclock": "02-ledclock.js",
+      "ledmatrix": "11-ledmatrix.js"
     }
   },
   "keywords": [
@@ -19,7 +20,8 @@
   ],
   "dependencies": {
     "ttbd-node-text-font": "TheThingBox/ttbd-node-text-font#2fa428a",
-    "sharp": "0.20.5"
+    "sharp": "0.20.5",
+    "moment-timezone": "0.5.21"
   },
   "author": {
     "name": "http://www.digitalairways.com/"
