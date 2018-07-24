@@ -3,9 +3,6 @@ module.exports = function(RED) {
 
   function ledblank(n) {
     RED.nodes.createNode(this,n);
-
-    this.text = n.text;
-
     var node = this;
 
     this.on('input', function (msg) {
