@@ -18,7 +18,8 @@
     "timesquair"
   ],
   "dependencies": {
-    "ttbd-node-text-font": "TheThingBox/ttbd-node-text-font#2fa428a"
+    "ttbd-node-text-font": "TheThingBox/ttbd-node-text-font#2fa428a",
+    "sharp": "0.20.5"
   },
   "author": {
     "name": "http://www.digitalairways.com/"
