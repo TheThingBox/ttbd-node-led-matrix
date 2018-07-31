@@ -3,7 +3,10 @@ module.exports = function ( RED ) {
   var moment = require("moment-timezone");
   var fs = require("fs");
   var path = require("path");
+  var mqtt = require("mqtt");
+
   var getColor = require("./utils").getColor
+  var getOffsetHour = require("./utils").getOffsetHour
 
   const ttbdNodeTextFont = "ttbd-node-text-font"
   const ttbdNodeTextFontPath = path.dirname(require.resolve(`${ttbdNodeTextFont}/package.json`));
@@ -18,8 +21,15 @@ module.exports = function ( RED ) {
     this.timezone = config.timezone;
     this.secondHand = config.secondHand;
     this.colonBlink = config.colonBlink;
+    this.client = mqtt.connect("mqtt://mosquitto:1883");
 
     var node = this;
+    this.client.on("close", function() {
+      node.status({ fill: "red", shape: "ring", text: "disconnected" });
+    });
+    this.client.on("connect", function() {
+      node.status({ fill: "green", shape: "dot", text: "connected" });
+    });
 
     this.on("input", function(msg) {
 
@@ -74,7 +84,6 @@ module.exports = function ( RED ) {
         timestamp = new Date().getTime();
       }
 
-
       /************************************
       ************* FONT SIZE *************
       ************************************/
@@ -128,17 +137,6 @@ module.exports = function ( RED ) {
         y: (msg.offset && msg.offset.y)?msg.offset.y:defaultOffsetY
       }
 
-      /************************************
-      *************** CHECK ***************
-      ************************************/
-
-      if(typeof msg._led_matrix === "undefined") {
-        msg._led_matrix = {
-          data: []
-        };
-      } else if(typeof msg._led_matrix.data === "undefined") {
-        msg._led_matrix.data = []
-      }
 
       /************************************
       **************** SEND ***************
@@ -151,16 +149,22 @@ module.exports = function ( RED ) {
         manipulatedMoment = manipulatedMoment.tz(timezone)
       }
 
-      msg._led_matrix.data.push({
-        type: "clock",
-        content: manipulatedMoment.format('HH:mm'),
+      node.client.publish("ui/ledmatrix/clock/start", JSON.stringify({
+        timezone: getOffsetHour(manipulatedMoment.format('HH:mm')),
+        backgroundColor: getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40),
         font: ((textFont!==null)?`${textFont}_${textsize}`:undefined),
-        offset: offset,
         color: getColor(msg.color, msg.intensity, 'rgb', 'white', 40),
+        offset: offset,
         colonBlink: colonBlink,
         secondHand: secondHand
-      })
+      }));
       node.send(msg);
+    });
+
+    this.on('close', function() {
+      if (node.client) {
+        node.client.end();
+      }
     });
   }
   RED.nodes.registerType("ledclock", ledclock);

@@ -1,6 +1,6 @@
 {
   "name": "ttbd-node-led-matrix",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Contains the nodes used in TimeSquAir to use the docker image skale",
   "node-red": {
     "nodes": {

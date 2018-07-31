@@ -47,37 +47,6 @@ module.exports = function(RED) {
         return;
       }
 
-      var isHour
-      if(msg._led_matrix.data.length === 1 && ['str', 'clock'].indexOf(msg._led_matrix.data[0].type) !== -1){
-        isHour = msg._led_matrix.data[0].content.match(clockRe)
-        if(isHour !== null && isHour.length !== 0 && isHour[0] == msg._led_matrix.data[0].content){
-          node.client.publish("ui/ledmatrix/clock/start", JSON.stringify(msg._led_matrix.data.map(d => {
-            d.timezone = getOffsetHour(d.content)
-            d.backgroundColor = getColor(msg.backgroundColor, msg.backgroundIntensity, 'bgr', 'black', 40)
-            delete d.content
-            return d
-          })[0]));
-          return;
-        }
-      } else {
-        msg._led_matrix.data = msg._led_matrix.data.map(d => {
-          if(d.type === "clock"){
-            d.type = "str"
-            if(!d.font){
-              var neighborFont = msg._led_matrix.data.filter(df => df.type === 'str')
-              if(neighborFont.length > 0){
-                d.offset = neighborFont[0].offset
-                neighborFont = neighborFont[0].font
-              } else {
-                neighborFont = 'Roboto-Regular_12'
-              }
-              d.font = neighborFont
-            }
-          }
-          return d
-        })
-      }
-
       var speed = 50;
       var _speed_value = msg.speed;
       if (_speed_value === null || typeof _speed_value === 'undefined' || _speed_value === ""){

@@ -498,7 +498,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="ledclock">
-  <p>Create a clock that can be displayed with node <b>ledmatrix</b></p>
+  <p>Displays a clock that will be automatically updated</p>
   <p>Properties are :</p>
   <ul>
     <li>You can set the clock color with <code>msg.color</code> (default color is white).</li>
@@ -507,6 +507,8 @@
     <li>You can set the timezone  with <code>msg.timezone</code> (default 'Europe/Paris').</li>
     <li>You can set the timestamp  with <code>msg.timestamp</code> (default 'now()').</li>
     <li>You can set the text brightness intensity (between 0 and 100 ) with <code>msg.intensity</code> (default intensity is 40%)</li>
+    <li>You can set the background color with <code>msg.backgroundColor</code> (default backround color is black).</li>
+    <li>You can set the background brightness intensity (between 0 and 100 ) with <code>msg.backgroundIntensity</code> (default intensity is 40%).</li>
   </ul>
 
   <p>Internal font</p>
@@ -526,8 +528,8 @@
       secondHand: { value: "" }
     },
     inputs: 1,
-    outputs: 1,
-    color: "#2196f3",
+    outputs: 0,
+    color: "#ffffff",
     paletteLabel: "led clock",
     icon: "ledclock.png",
     label: function() {
