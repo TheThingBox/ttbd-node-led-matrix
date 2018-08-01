@@ -133,8 +133,8 @@ module.exports = function ( RED ) {
       var defaultOffsetY = prefferedOffsetY || 0
 
       var offset = {
-        x: (msg.offset && msg.offset.x)?msg.offset.x:defaultOffsetX,
-        y: (msg.offset && msg.offset.y)?msg.offset.y:defaultOffsetY
+        x: (msg.offset && (msg.offset.x || msg.offset.x === 0))?msg.offset.x:defaultOffsetX,
+        y: (msg.offset && (msg.offset.y || msg.offset.y === 0))?msg.offset.y:defaultOffsetY
       }
 
 

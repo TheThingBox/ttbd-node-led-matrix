@@ -2,7 +2,6 @@ module.exports = function(RED) {
   "use strict";
 
   var getColor = require("./utils").getColor
-  var getOffsetHour = require("./utils").getOffsetHour
   var mqtt = require("mqtt");
   var scrollingDirection = [
     {
