@@ -19,6 +19,7 @@
     "timesquair"
   ],
   "dependencies": {
+    "follow-redirects": "1.5.7",
     "ttbd-node-text-font": "TheThingBox/ttbd-node-text-font#2fa428a",
     "sharp": "0.20.5",
     "moment-timezone": "0.5.21"
